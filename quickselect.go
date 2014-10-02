@@ -11,18 +11,17 @@ type Interface interface {
   // index i should sort before the element with index j
   Less(i, j int) bool
   // Swap swaps the order of elements i and j
-  Swap(i, j)
+  Swap(i, j int)
 }
 
-func randomizedMedianFinding(data Interface, low, high, k int) (Interface) {
-  if low == high {
-    return low
-  }
-
+func randomizedMedianFinding(data Interface, low, high, k int) {
   var pivotIndex int
 
   for {
-    pivotIndex = Rand.Intn(high + 1 - low) + low
+    if low >= high {
+      return
+    }
+    pivotIndex = rand.Intn(high + 1 - low) + low
     pivotIndex = partition(data, low, high, pivotIndex)
 
     if k < pivotIndex {
@@ -30,7 +29,7 @@ func randomizedMedianFinding(data Interface, low, high, k int) (Interface) {
     } else if k > pivotIndex {
       low = pivotIndex + 1
     } else {
-      return data
+      return
     }
   }
 }
@@ -38,8 +37,8 @@ func randomizedMedianFinding(data Interface, low, high, k int) (Interface) {
 func partition(data Interface, low, high, pivotIndex int) (int) {
   partitionIndex := low
   data.Swap(pivotIndex, high)
-  for i := low; i++; i<high {
-    if data.Less(i, pivotIndex) {
+  for i := low; i < high; i++ {
+    if data.Less(i, high) {
       data.Swap(i, partitionIndex)
       partitionIndex++
     }
@@ -48,6 +47,6 @@ func partition(data Interface, low, high, pivotIndex int) (int) {
   return partitionIndex
 }
 
-func QuickSelect(data Interface, k int) (Interface) {
-  return randomizedMedianFinding(data, 0, data.Len() - 1, k)
+func QuickSelect(data Interface, k int) {
+  randomizedMedianFinding(data, 0, data.Len() - 1, k)
 }
