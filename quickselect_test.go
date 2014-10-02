@@ -31,6 +31,17 @@ func TestQuickSelectWithSimpleArray(t *testing.T) {
   }
 }
 
+func TestQuickSelectWithRepeatedElements(t *testing.T) {
+  fixture := TestData{[]int{2, 10, 5, 3, 2, 6, 2, 6, 10, 3, 4, 5}}
+  QuickSelect(fixture, 5)
+
+  smallestK := fixture.Array[:5]
+  expectedK := []int{2,2,2,3,3}
+  if !hasSameElements(smallestK, expectedK) {
+    t.Errorf("Expected smallest K elements to be '%s', but got '%s'", expectedK, smallestK)
+  }
+}
+
 func hasSameElements(array1, array2 []int) (bool) {
   elements := make(map[int]int)
 
