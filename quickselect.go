@@ -18,9 +18,57 @@ type Interface interface {
 
 type IntSlice []int
 
+func (t IntSlice) Len() (int) {
+  return len(t)
+}
+
+func (t IntSlice) Less(i, j int) bool {
+  return t[i] < t[j]
+}
+
+func (t IntSlice) Swap(i, j int) {
+  t[i], t[j] = t[j], t[i]
+}
+
+func (t IntSlice) QuickSelect(k int) (error) {
+  return QuickSelect(t, k)
+}
+
 type Float64Slice []float64
 
+func (t Float64Slice) Len() (int) {
+  return len(t)
+}
+
+func (t Float64Slice) Less(i, j int) bool {
+  return t[i] < t[j] || isNaN(t[i]) && !isNaN(t[j])
+}
+
+func (t Float64Slice) Swap(i, j int) {
+  t[i], t[j] = t[j], t[i]
+}
+
+func (t Float64Slice) QuickSelect(k int) (error) {
+  return QuickSelect(t, k)
+}
+
 type StringSlice []string
+
+func (t StringSlice) Len() (int) {
+  return len(t)
+}
+
+func (t StringSlice) Less(i, j int) bool {
+  return t[i] < t[j]
+}
+
+func (t StringSlice) Swap(i, j int) {
+  t[i], t[j] = t[j], t[i]
+}
+
+func (t StringSlice) QuickSelect(k int) (error) {
+  return QuickSelect(t, k)
+}
 
 func randomizedMedianFinding(data Interface, low, high, k int) {
   var pivotIndex int
