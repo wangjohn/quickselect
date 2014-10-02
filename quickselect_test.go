@@ -66,6 +66,29 @@ func TestQuickSelectEmptyDataStructure(t *testing.T) {
   }
 }
 
+func TestIntSliceQuickSelect(t *testing.T) {
+  fixtures := []struct {
+    Array IntSlice
+    ExpectedK []int
+  }{
+    {[]int{0, 14, 16, 29, 12, 2, 4, 4, 7, 29}, []int{0, 2, 4, 4}},
+    {[]int{9, 3, 2, 18}, []int{9, 3, 2, 18}},
+    {[]int{16, 29, -11, 25, 28, -14, 10, 4, 7, -27}, []int{-27, -11, -14, 4}},
+  }
+
+  for _, fixture := range fixtures {
+    err := fixture.Array.QuickSelect(3)
+    if err != nil {
+      t.Errorf("Shouldn't have raised error: '%s'", err.Error())
+    }
+
+    resultK := fixture.Array[:4]
+    if !hasSameElements(resultK, fixture.ExpectedK) {
+      t.Errorf("Expected smallest K elements to be '%s', but got '%s'", fixture.ExpectedK, resultK)
+    }
+  }
+}
+
 func hasSameElements(array1, array2 []int) (bool) {
   elements := make(map[int]int)
 

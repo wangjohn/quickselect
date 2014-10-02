@@ -70,6 +70,11 @@ func (t StringSlice) QuickSelect(k int) (error) {
   return QuickSelect(t, k)
 }
 
+// isNaN is a copy of math.IsNaN to avoid a dependency on the math package.
+func isNaN(f float64) bool {
+  return f != f
+}
+
 func randomizedMedianFinding(data Interface, low, high, k int) {
   var pivotIndex int
 
