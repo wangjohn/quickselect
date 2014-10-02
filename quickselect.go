@@ -2,6 +2,8 @@ package quickselect
 
 import (
   "math/rand"
+  "errors"
+  "fmt"
 )
 
 type Interface interface {
@@ -13,6 +15,12 @@ type Interface interface {
   // Swap swaps the order of elements i and j
   Swap(i, j int)
 }
+
+type IntSlice []int
+
+type Float64Slice []float64
+
+type StringSlice []string
 
 func randomizedMedianFinding(data Interface, low, high, k int) {
   var pivotIndex int
@@ -47,6 +55,12 @@ func partition(data Interface, low, high, pivotIndex int) (int) {
   return partitionIndex
 }
 
-func QuickSelect(data Interface, k int) {
-  randomizedMedianFinding(data, 0, data.Len() - 1, k)
+func QuickSelect(data Interface, k int) (error) {
+  length := data.Len()
+  if (k < 0 || k >= length) {
+    message := fmt.Sprintf("The specified index '%d' is outside of the data's range of indices [0,%d)", k, length)
+    return errors.New(message)
+  }
+  randomizedMedianFinding(data, 0, length - 1, k)
+  return nil
 }
