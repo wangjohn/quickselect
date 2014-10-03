@@ -15,9 +15,9 @@ func (p Person) String() string {
 }
 
 type ByAge []Person
-func (a ByAge) Len() int      { return len(a) }
-func (a ByAge) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
-func (a ByAge) Less(i, j int) { return a[i].Age < a[j].Age }
+func (a ByAge) Len() int           { return len(a) }
+func (a ByAge) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a ByAge) Less(i, j int) bool { return a[i].Age < a[j].Age }
 
 func Example() {
   people := []Person{
