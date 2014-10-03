@@ -6,6 +6,14 @@ import (
   "fmt"
 )
 
+/*
+A type, typically a collection, which satisfies quickselect.Interface can be
+used as data in the QuickSelect method. The interface is the same as the
+interface required by Go's canonical sorting package (sort.Interface).
+
+Note that the methods require that the elements of the collection be enumerated
+by an integer index.
+*/
 type Interface interface {
   // Len is the number of elements in the collection
   Len() int
@@ -16,6 +24,8 @@ type Interface interface {
   Swap(i, j int)
 }
 
+// The IntSlice type attaches the QuickSelect interface to an array of ints. It
+// implements Interface so that you can call QuickSelect(k) on any IntSlice.
 type IntSlice []int
 
 func (t IntSlice) Len() (int) {
@@ -30,10 +40,16 @@ func (t IntSlice) Swap(i, j int) {
   t[i], t[j] = t[j], t[i]
 }
 
+// QuickSelect(k) mutates the IntSlice so that the first k elements in the
+// IntSlice are the k smallest elements in the slice. This is a convenience
+// method for QuickSelect
 func (t IntSlice) QuickSelect(k int) (error) {
   return QuickSelect(t, k)
 }
 
+// The Float64Slice type attaches the QuickSelect interface to an array of
+// float64s. It implements Interface so that you can call QuickSelect(k) on any
+// Float64Slice.
 type Float64Slice []float64
 
 func (t Float64Slice) Len() (int) {
@@ -48,10 +64,16 @@ func (t Float64Slice) Swap(i, j int) {
   t[i], t[j] = t[j], t[i]
 }
 
+// QuickSelect(k) mutates the Float64Slice so that the first k elements in the
+// Float64Slice are the k smallest elements in the slice. This is a convenience
+// method for QuickSelect
 func (t Float64Slice) QuickSelect(k int) (error) {
   return QuickSelect(t, k)
 }
 
+// The StringSlice type attaches the QuickSelect interface to an array of
+// float64s. It implements Interface so that you can call QuickSelect(k) on any
+// StringSlice.
 type StringSlice []string
 
 func (t StringSlice) Len() (int) {
@@ -66,6 +88,9 @@ func (t StringSlice) Swap(i, j int) {
   t[i], t[j] = t[j], t[i]
 }
 
+// QuickSelect(k) mutates the StringSlice so that the first k elements in the
+// StringSlice are the k smallest elements in the slice. This is a convenience
+// method for QuickSelect
 func (t StringSlice) QuickSelect(k int) (error) {
   return QuickSelect(t, k)
 }
@@ -75,6 +100,15 @@ func isNaN(f float64) bool {
   return f != f
 }
 
+/*
+Helper function that does all of the work for QuickSelect. This implements
+Hoare's Selection Algorithm which finds the smallest k elements in an interface
+in expected O(n) time.
+
+The algorithm works by finding a random pivot element, and making sure all the
+elements to the left are less than the pivot element and vice versa for
+elements on the right. Recursing on this solves the selection algorithm.
+*/
 func randomizedMedianFinding(data Interface, low, high, k int) {
   var pivotIndex int
 
@@ -95,6 +129,15 @@ func randomizedMedianFinding(data Interface, low, high, k int) {
   }
 }
 
+/*
+Helper function for the selection algorithm. Returns the partitionIndex.
+
+It goes through all elements between low and high and makes sure that the
+elements in the range [low, partitionIndex) are less than the element that was
+originally in the pivotIndex and that the elements in the range
+[paritionIndex + 1, high] are greater than the element originally in the
+pivotIndex.
+*/
 func partition(data Interface, low, high, pivotIndex int) (int) {
   partitionIndex := low
   data.Swap(pivotIndex, high)
@@ -108,6 +151,18 @@ func partition(data Interface, low, high, pivotIndex int) (int) {
   return partitionIndex
 }
 
+/*
+QuickSelect swaps elements in the data provided so that the first k elements
+(i.e. the elements occuping indices 0, 1, ..., k-1) are the smallest k elements
+in the data.
+
+QuickSelect implements Hoare's Selection Algorithm and runs in O(n) time, so it
+is asymptotically faster than sorting or other heap-like implementations for
+finding the smallest k elements in a data structure.
+
+Note that k must be in the range [0, data.Len()), otherwise the QuickSelect
+method will raise an error.
+*/
 func QuickSelect(data Interface, k int) (error) {
   length := data.Len()
   if (k < 0 || k >= length) {
