@@ -29,4 +29,5 @@ func Example() {
 
   quickselect.QuickSelect(ByAge(people), 2)
   fmt.Println(people[:2])
+  // Output: [Michael: 17 Jenny: 26]
 }
