@@ -1,8 +1,8 @@
 package quickselect_test
 
 import (
-  "quickselect"
   "fmt"
+  "github.com/wangjohn/quickselect"
 )
 
 type Person struct {

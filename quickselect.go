@@ -32,6 +32,21 @@ type Interface interface {
   Swap(i, j int)
 }
 
+type reverse struct {
+  // This embedded Interface permits Reverse to use the methods of
+  // another Interface implementation.
+  Interface
+}
+
+// Less returns the opposite of the embedded implementation's Less method.
+func (r reverse) Less(i, j int) bool {
+  return r.Interface.Less(j, i)
+}
+
+func Reverse(data Interface) (Interface) {
+  return &reverse{data}
+}
+
 // The IntSlice type attaches the QuickSelect interface to an array of ints. It
 // implements Interface so that you can call QuickSelect(k) on any IntSlice.
 type IntSlice []int
