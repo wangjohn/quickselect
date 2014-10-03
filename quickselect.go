@@ -14,6 +14,11 @@ import (
   "fmt"
 )
 
+const (
+  partitionThreshold = 8
+  randomizedSelectionThreshold = 10
+)
+
 /*
 A type, typically a collection, which satisfies quickselect.Interface can be
 used as data in the QuickSelect method. The interface is the same as the
@@ -132,13 +137,17 @@ The algorithm works by finding a random pivot element, and making sure all the
 elements to the left are less than the pivot element and vice versa for
 elements on the right. Recursing on this solves the selection algorithm.
 */
-func randomizedMedianFinding(data Interface, low, high, k int) {
+func randomizedSelectionFinding(data Interface, low, high, k int) {
   var pivotIndex int
 
   for {
     if low >= high {
       return
+    } else if high - low <= partitionThreshold {
+      insertionSort(data, low, high + 1)
+      return
     }
+
     pivotIndex = rand.Intn(high + 1 - low) + low
     pivotIndex = partition(data, low, high, pivotIndex)
 
@@ -150,6 +159,45 @@ func randomizedMedianFinding(data Interface, low, high, k int) {
       return
     }
   }
+}
+
+// Insertion sort
+func insertionSort(data Interface, a, b int) {
+  for i := a + 1; i < b; i++ {
+    for j := i; j > a && data.Less(j, j-1); j-- {
+      data.Swap(j, j-1)
+    }
+  }
+}
+
+// TODO: fix the implementation of this
+func naiveSelectionFinding(data Interface, k int) {
+  smallestIndices := make([]int, k)
+  for i := 0; i < k; i++ {
+    smallestIndices[i] = i
+  }
+
+  for i := k; i < data.Len(); i++ {
+    if data.Less(i, smallestIndices[k-1]) {
+      smallestIndices[k-1] = i
+      resetLargestIndex(smallestIndices, data)
+    }
+  }
+}
+
+/*
+Takes the largest index in `indices` according to the data Interface and places
+it at the end of the indices array.
+*/
+func resetLargestIndex(indices []int, data Interface) {
+  var currentSmallest = 0
+  for i := 1; i < len(indices); i++ {
+    if data.Less(i, currentSmallest) {
+      currentSmallest = i
+    }
+  }
+
+  indices[len(indices) - 1] = currentSmallest
 }
 
 /*
@@ -192,7 +240,12 @@ func QuickSelect(data Interface, k int) (error) {
     message := fmt.Sprintf("The specified index '%d' is outside of the data's range of indices [0,%d)", k, length)
     return errors.New(message)
   }
-  randomizedMedianFinding(data, 0, length - 1, k)
+  if k > randomizedSelectionThreshold {
+    randomizedSelectionFinding(data, 0, length - 1, k)
+  } else {
+    naiveSelectionFinding(data, k)
+  }
+
   return nil
 }
 
