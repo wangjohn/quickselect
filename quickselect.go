@@ -195,3 +195,24 @@ func QuickSelect(data Interface, k int) (error) {
   randomizedMedianFinding(data, 0, length - 1, k)
   return nil
 }
+
+// IntQuickSelect mutates the data so that the first k elements in the int
+// slice are the k smallest elements in the slice. This is a convenience
+// method for QuickSelect on int slices.
+func IntQuickSelect(data []int, k int) (error) {
+  return QuickSelect(IntSlice(data), k)
+}
+
+// Float64Select mutates the data so that the first k elements in the float64
+// slice are the k smallest elements in the slice. This is a convenience
+// method for QuickSelect on float64 slices.
+func Float64QuickSelect(data []float64, k int) (error) {
+  return QuickSelect(Float64Slice(data), k)
+}
+
+// StringQuickSelect mutates the data so that the first k elements in the string
+// slice are the k smallest elements in the slice. This is a convenience
+// method for QuickSelect on string slices.
+func StringQuickSelect(data []string, k int) (error) {
+  return QuickSelect(StringSlice(data), k)
+}
