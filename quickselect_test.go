@@ -2,6 +2,7 @@ package quickselect
 
 import (
   "testing"
+  "sort"
 )
 
 type TestData struct {
@@ -149,3 +150,48 @@ func hasSameElementsFloat64(array1, array2 []float64) (bool) {
   }
   return true
 }
+
+func bench(b *testing.B, size, k int, quickselect bool) {
+  b.StopTimer()
+  data := make(IntSlice, size)
+  x := ^uint32(0)
+  for i := 0; i < b.N; i++ {
+    for n := size - 3; n <= size+3; n++ {
+      for i := 0; i < len(data); i++ {
+        x += x
+        x ^= 1
+        if int32(x) < 0 {
+          x ^= 0x88888eef
+        }
+        data[i] = int(x % uint32(n/5))
+      }
+      if quickselect {
+        b.StartTimer()
+        QuickSelect(data, k)
+        b.StopTimer()
+      } else {
+        b.StartTimer()
+        sort.Sort(data)
+        b.StopTimer()
+      }
+    }
+  }
+}
+
+// Benchmarks for QuickSelect
+func BenchmarkQuickSelectSize1e2K1e1(b *testing.B) { bench(b, 1e2, 1e1, true) }
+func BenchmarkQuickSelectSize1e4K1e1(b *testing.B) { bench(b, 1e4, 1e1, true) }
+func BenchmarkQuickSelectSize1e6K1e1(b *testing.B) { bench(b, 1e6, 1e1, true) }
+func BenchmarkQuickSelectSize1e8K1e1(b *testing.B) { bench(b, 1e8, 1e1, true) }
+func BenchmarkQuickSelectSize1e4K1e2(b *testing.B) { bench(b, 1e4, 1e2, true) }
+func BenchmarkQuickSelectSize1e6K1e2(b *testing.B) { bench(b, 1e6, 1e2, true) }
+func BenchmarkQuickSelectSize1e8K1e2(b *testing.B) { bench(b, 1e8, 1e2, true) }
+func BenchmarkQuickSelectSize1e6K1e4(b *testing.B) { bench(b, 1e6, 1e4, true) }
+func BenchmarkQuickSelectSize1e8K1e4(b *testing.B) { bench(b, 1e8, 1e4, true) }
+func BenchmarkQuickSelectSize1e8K1e6(b *testing.B) { bench(b, 1e8, 1e6, true) }
+
+// Benchmarks for sorting
+func BenchmarkSortSize1e2K1e1(b *testing.B) { bench(b, 1e2, 1e1, false) }
+func BenchmarkSortSize1e4K1e1(b *testing.B) { bench(b, 1e4, 1e1, false) }
+func BenchmarkSortSize1e6K1e1(b *testing.B) { bench(b, 1e6, 1e1, false) }
+func BenchmarkSortSize1e8K1e1(b *testing.B) { bench(b, 1e8, 1e1, false) }
