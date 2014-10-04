@@ -86,3 +86,5 @@ AVG 19.16351964
 MAX 39.07737829
 MIN 2.229672263
 ```
+
+If you'd like to run the benchmarks yourself, you can run them by doing `go test -bench .` inside of a checkout of the quickselect source.
