@@ -170,18 +170,28 @@ func insertionSort(data Interface, a, b int) {
   }
 }
 
-// TODO: fix the implementation of this
+/*
+This method does a run over all of the data keeps a list of the k smallest
+indices that it has seen so far. At the end, it swaps those k elements and
+moves them to the front.
+*/
 func naiveSelectionFinding(data Interface, k int) {
   smallestIndices := make([]int, k)
   for i := 0; i < k; i++ {
     smallestIndices[i] = i
   }
+  resetLargestIndex(smallestIndices, data)
 
   for i := k; i < data.Len(); i++ {
     if data.Less(i, smallestIndices[k-1]) {
       smallestIndices[k-1] = i
       resetLargestIndex(smallestIndices, data)
     }
+  }
+
+  insertionSort(IntSlice(smallestIndices), 0, k)
+  for i := 0; i < k; i++ {
+    data.Swap(i, smallestIndices[i])
   }
 }
 
@@ -190,14 +200,17 @@ Takes the largest index in `indices` according to the data Interface and places
 it at the end of the indices array.
 */
 func resetLargestIndex(indices []int, data Interface) {
-  var currentSmallest = 0
+  var largestIndex = 0
+  var currentLargest = indices[0]
+
   for i := 1; i < len(indices); i++ {
-    if data.Less(i, currentSmallest) {
-      currentSmallest = i
+    if data.Less(currentLargest, indices[i]) {
+      largestIndex = i
+      currentLargest = indices[i]
     }
   }
 
-  indices[len(indices) - 1] = currentSmallest
+  indices[len(indices) - 1], indices[largestIndex] = indices[largestIndex], indices[len(indices) - 1]
 }
 
 /*
@@ -236,7 +249,7 @@ method will raise an error.
 */
 func QuickSelect(data Interface, k int) (error) {
   length := data.Len()
-  if (k < 0 || k >= length) {
+  if (k < 1 || k > length) {
     message := fmt.Sprintf("The specified index '%d' is outside of the data's range of indices [0,%d)", k, length)
     return errors.New(message)
   }

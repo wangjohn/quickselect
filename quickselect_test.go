@@ -78,10 +78,56 @@ func TestIntSliceQuickSelect(t *testing.T) {
   }
 
   for _, fixture := range fixtures {
-    err := fixture.Array.QuickSelect(3)
+    err := fixture.Array.QuickSelect(4)
     if err != nil {
       t.Errorf("Shouldn't have raised error: '%s'", err.Error())
     }
+
+    resultK := fixture.Array[:4]
+    if !hasSameElements(resultK, fixture.ExpectedK) {
+      t.Errorf("Expected smallest K elements to be '%s', but got '%s'", fixture.ExpectedK, resultK)
+    }
+  }
+}
+
+func TestResetCurrentLargest(t *testing.T) {
+  fixtures := []struct {
+    Array IntSlice
+    ExpectedLast int
+  }{
+    {[]int{20, 15, 2, 8, 9, 25, 3, 5}, 5},
+    {[]int{0, 0, 5, 3, 5, 2}, 2},
+    {[]int{3}, 0},
+    {[]int{35, 25, 15, 10, 5}, 0},
+  }
+
+  for _, fixture := range fixtures {
+    indices := make([]int, len(fixture.Array))
+    for i := 0; i < len(fixture.Array); i++ {
+      indices[i] = i
+    }
+    resetLargestIndex(indices, IntSlice(fixture.Array))
+    lastIndex := indices[len(indices) - 1]
+    if lastIndex != fixture.ExpectedLast {
+      t.Errorf("Expected last index of '%d', but got '%d' instead", fixture.ExpectedLast, lastIndex)
+    }
+  }
+}
+
+func TestNaiveSelectionFinding(t *testing.T) {
+  fixtures := []struct {
+    Array IntSlice
+    ExpectedK []int
+  }{
+    {[]int{0, 14, 16, 29, 12, 2, 4, 4, 7, 29}, []int{0, 2, 4, 4}},
+    {[]int{9, 3, 2, 18}, []int{9, 3, 2, 18}},
+    {[]int{16, 29, -11, 25, 28, -14, 10, 4, 7, -27}, []int{-27, -11, -14, 4}},
+    {[]int{10, 25, 15, 35, 26, 40, 55}, []int{10, 15, 25, 26}},
+    {[]int{2, 10, 5, 3, 2, 6, 2, 6, 10, 3, 4, 5}, []int{2, 2, 2, 3}},
+  }
+
+  for _, fixture := range fixtures {
+    naiveSelectionFinding(fixture.Array, 4)
 
     resultK := fixture.Array[:4]
     if !hasSameElements(resultK, fixture.ExpectedK) {
@@ -101,7 +147,7 @@ func TestFloat64SliceQuickSelect(t *testing.T) {
   }
 
   for _, fixture := range fixtures {
-    err := fixture.Array.QuickSelect(3)
+    err := fixture.Array.QuickSelect(4)
     if err != nil {
       t.Errorf("Shouldn't have raised error: '%s'", err.Error())
     }
