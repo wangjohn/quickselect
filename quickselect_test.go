@@ -248,18 +248,45 @@ func bench(b *testing.B, size, k int, quickselect bool) {
 
 // Benchmarks for QuickSelect
 func BenchmarkQuickSelectSize1e2K1e1(b *testing.B) { bench(b, 1e2, 1e1, true) }
+
+func BenchmarkQuickSelectSize1e3K1e1(b *testing.B) { bench(b, 1e3, 1e1, true) }
+func BenchmarkQuickSelectSize1e3K1e2(b *testing.B) { bench(b, 1e3, 1e2, true) }
+
 func BenchmarkQuickSelectSize1e4K1e1(b *testing.B) { bench(b, 1e4, 1e1, true) }
-func BenchmarkQuickSelectSize1e6K1e1(b *testing.B) { bench(b, 1e6, 1e1, true) }
-func BenchmarkQuickSelectSize1e8K1e1(b *testing.B) { bench(b, 1e8, 1e1, true) }
 func BenchmarkQuickSelectSize1e4K1e2(b *testing.B) { bench(b, 1e4, 1e2, true) }
+func BenchmarkQuickSelectSize1e4K1e3(b *testing.B) { bench(b, 1e4, 1e3, true) }
+
+func BenchmarkQuickSelectSize1e5K1e1(b *testing.B) { bench(b, 1e5, 1e1, true) }
+func BenchmarkQuickSelectSize1e5K1e2(b *testing.B) { bench(b, 1e5, 1e2, true) }
+func BenchmarkQuickSelectSize1e5K1e3(b *testing.B) { bench(b, 1e5, 1e3, true) }
+func BenchmarkQuickSelectSize1e5K1e4(b *testing.B) { bench(b, 1e5, 1e4, true) }
+
+func BenchmarkQuickSelectSize1e6K1e1(b *testing.B) { bench(b, 1e6, 1e1, true) }
 func BenchmarkQuickSelectSize1e6K1e2(b *testing.B) { bench(b, 1e6, 1e2, true) }
-func BenchmarkQuickSelectSize1e8K1e2(b *testing.B) { bench(b, 1e8, 1e2, true) }
+func BenchmarkQuickSelectSize1e6K1e3(b *testing.B) { bench(b, 1e6, 1e3, true) }
 func BenchmarkQuickSelectSize1e6K1e4(b *testing.B) { bench(b, 1e6, 1e4, true) }
+func BenchmarkQuickSelectSize1e6K1e5(b *testing.B) { bench(b, 1e6, 1e5, true) }
+
+func BenchmarkQuickSelectSize1e7K1e1(b *testing.B) { bench(b, 1e7, 1e1, true) }
+func BenchmarkQuickSelectSize1e7K1e2(b *testing.B) { bench(b, 1e7, 1e2, true) }
+func BenchmarkQuickSelectSize1e7K1e3(b *testing.B) { bench(b, 1e7, 1e3, true) }
+func BenchmarkQuickSelectSize1e7K1e4(b *testing.B) { bench(b, 1e7, 1e4, true) }
+func BenchmarkQuickSelectSize1e7K1e5(b *testing.B) { bench(b, 1e7, 1e5, true) }
+func BenchmarkQuickSelectSize1e7K1e6(b *testing.B) { bench(b, 1e7, 1e6, true) }
+
+func BenchmarkQuickSelectSize1e8K1e1(b *testing.B) { bench(b, 1e8, 1e1, true) }
+func BenchmarkQuickSelectSize1e8K1e2(b *testing.B) { bench(b, 1e8, 1e2, true) }
+func BenchmarkQuickSelectSize1e8K1e3(b *testing.B) { bench(b, 1e8, 1e3, true) }
 func BenchmarkQuickSelectSize1e8K1e4(b *testing.B) { bench(b, 1e8, 1e4, true) }
+func BenchmarkQuickSelectSize1e8K1e5(b *testing.B) { bench(b, 1e8, 1e5, true) }
 func BenchmarkQuickSelectSize1e8K1e6(b *testing.B) { bench(b, 1e8, 1e6, true) }
+func BenchmarkQuickSelectSize1e8K1e7(b *testing.B) { bench(b, 1e8, 1e7, true) }
 
 // Benchmarks for sorting
 func BenchmarkSortSize1e2K1e1(b *testing.B) { bench(b, 1e2, 1e1, false) }
+func BenchmarkSortSize1e3K1e1(b *testing.B) { bench(b, 1e3, 1e1, false) }
 func BenchmarkSortSize1e4K1e1(b *testing.B) { bench(b, 1e4, 1e1, false) }
+func BenchmarkSortSize1e5K1e1(b *testing.B) { bench(b, 1e5, 1e1, false) }
 func BenchmarkSortSize1e6K1e1(b *testing.B) { bench(b, 1e6, 1e1, false) }
+func BenchmarkSortSize1e7K1e1(b *testing.B) { bench(b, 1e7, 1e1, false) }
 func BenchmarkSortSize1e8K1e1(b *testing.B) { bench(b, 1e8, 1e1, false) }

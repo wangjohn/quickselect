@@ -17,8 +17,10 @@ import (
 
 const (
   partitionThreshold = 8
-  heapSelectionThreshold = 10
-  randomizedSelectionThreshold = 1e3
+  naiveSelectionKRatio = 0.000001
+  naiveSelectionThreshold = 10
+  heapSelectionKRatio = 0.001
+  heapSelectionThreshold = 1e3
 )
 
 /*
@@ -306,12 +308,13 @@ func QuickSelect(data Interface, k int) (error) {
     return errors.New(message)
   }
 
-  if k > randomizedSelectionThreshold {
-    randomizedSelectionFinding(data, 0, length - 1, k)
-  } else if k > heapSelectionThreshold {
+  kRatio := float64(k) / float64(length)
+  if k <= naiveSelectionThreshold {
+    naiveSelectionFinding(data, k)
+  } else if kRatio <= heapSelectionKRatio && k <= heapSelectionThreshold {
     heapSelectionFinding(data, k)
   } else {
-    naiveSelectionFinding(data, k)
+    randomizedSelectionFinding(data, 0, length - 1, k)
   }
 
   return nil
