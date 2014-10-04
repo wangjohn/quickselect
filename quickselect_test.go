@@ -136,6 +136,28 @@ func TestNaiveSelectionFinding(t *testing.T) {
   }
 }
 
+func TestHeapSelectionFinding(t *testing.T) {
+  fixtures := []struct {
+    Array IntSlice
+    ExpectedK []int
+  }{
+    {[]int{0, 14, 16, 29, 12, 2, 4, 4, 7, 29}, []int{0, 2, 4, 4}},
+    {[]int{9, 3, 2, 18}, []int{9, 3, 2, 18}},
+    {[]int{16, 29, -11, 25, 28, -14, 10, 4, 7, -27}, []int{-27, -11, -14, 4}},
+    {[]int{10, 25, 15, 35, 26, 40, 55}, []int{10, 15, 25, 26}},
+    {[]int{2, 10, 5, 3, 2, 6, 2, 6, 10, 3, 4, 5}, []int{2, 2, 2, 3}},
+  }
+
+  for _, fixture := range fixtures {
+    heapSelectionFinding(fixture.Array, 4)
+
+    resultK := fixture.Array[:4]
+    if !hasSameElements(resultK, fixture.ExpectedK) {
+      t.Errorf("Expected smallest K elements to be '%s', but got '%s'", fixture.ExpectedK, resultK)
+    }
+  }
+}
+
 func TestFloat64SliceQuickSelect(t *testing.T) {
   fixtures := []struct {
     Array Float64Slice

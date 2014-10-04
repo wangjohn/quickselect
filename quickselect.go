@@ -12,11 +12,13 @@ import (
   "math/rand"
   "errors"
   "fmt"
+  "container/heap"
 )
 
 const (
   partitionThreshold = 8
-  randomizedSelectionThreshold = 10
+  heapSelectionThreshold = 10
+  randomizedSelectionThreshold = 1e3
 )
 
 /*
@@ -235,6 +237,56 @@ func partition(data Interface, low, high, pivotIndex int) (int) {
   return partitionIndex
 }
 
+type dataHeap struct {
+  heapIndices []int
+  data Interface
+}
+
+func (h dataHeap) Len() int { return len(h.heapIndices) }
+func (h dataHeap) Less(i, j int) bool { return h.data.Less(h.heapIndices[j], h.heapIndices[i]) }
+func (h dataHeap) Swap(i, j int) { h.heapIndices[i], h.heapIndices[j] = h.heapIndices[j], h.heapIndices[i] }
+
+func (h *dataHeap) Push(x interface{}) {
+  h.heapIndices = append(h.heapIndices, x.(int))
+}
+
+func (h *dataHeap) Pop() interface{} {
+  old := h.heapIndices
+  n := len(old)
+  x := old[n-1]
+  h.heapIndices = old[0 : n-1]
+  return x
+}
+
+/*
+This method implements the heap strategy for selecting the smallest k elements.
+It keeps a max-heap of the smallest k elements seen so far as we iterate over
+all of the elements. It adds a new element and pops the largest element.
+*/
+func heapSelectionFinding(data Interface, k int) {
+  heapIndices := make([]int, k)
+  for i := 0; i < k; i++ {
+    heapIndices[i] = i
+  }
+
+  h := &dataHeap{heapIndices, data}
+  heap.Init(h)
+  var currentHeapMax int
+  for i := k; i < data.Len(); i++ {
+    currentHeapMax = h.heapIndices[0]
+
+    if data.Less(i, currentHeapMax) {
+      heap.Push(h, i)
+      heap.Pop(h)
+    }
+  }
+
+  insertionSort(IntSlice(h.heapIndices), 0, len(h.heapIndices))
+  for i := 0; i < len(h.heapIndices); i++ {
+    data.Swap(i, h.heapIndices[i])
+  }
+}
+
 /*
 QuickSelect swaps elements in the data provided so that the first k elements
 (i.e. the elements occuping indices 0, 1, ..., k-1) are the smallest k elements
@@ -253,8 +305,11 @@ func QuickSelect(data Interface, k int) (error) {
     message := fmt.Sprintf("The specified index '%d' is outside of the data's range of indices [0,%d)", k, length)
     return errors.New(message)
   }
+
   if k > randomizedSelectionThreshold {
     randomizedSelectionFinding(data, 0, length - 1, k)
+  } else if k > heapSelectionThreshold {
+    heapSelectionFinding(data, k)
   } else {
     naiveSelectionFinding(data, k)
   }
