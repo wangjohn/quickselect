@@ -1,7 +1,7 @@
 QuickSelect
 ===========
 
-QuickSelect is a Go package which provides primitives for finding the smallest k elements in slices and user-defined collections. The primitives used in the package are modeled off of the standard sort library for Go. Quickselect uses Hoare's Selection Algorithm which finds the smallest k elements in expected O(n) time, and is thus an asymptotically optimal algorithm (and is faster than sorting or heap implementations). QuickSelect is also faster than just Hoare's Selection Algorithm alone, since it switches to less asymptotically optimal algorithms for small k (which have smaller constant factors and thus run faster for small numbers of elements).
+QuickSelect is a Go package which provides primitives for finding the smallest k elements in slices and user-defined collections. The primitives used in the package are modeled off of the standard sort library for Go. Quickselect uses [Hoare's Selection Algorithm](http://en.wikipedia.org/wiki/Selection_algorithm) which finds the smallest k elements in expected O(n) time, and is thus an asymptotically optimal algorithm (and is faster than sorting or heap implementations). QuickSelect is also faster than just Hoare's Selection Algorithm alone, since it switches to less asymptotically optimal algorithms for small k (which have smaller constant factors and thus run faster for small numbers of elements).
 
 In addition to its main functionality of finding the smallest k elements in a slice or a user-defined collection, QuickSelect also does the following:
 
