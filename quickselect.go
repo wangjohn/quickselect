@@ -10,7 +10,6 @@ package quickselect
 
 import (
   "math/rand"
-  "errors"
   "fmt"
   "container/heap"
 )
@@ -298,14 +297,13 @@ QuickSelect implements Hoare's Selection Algorithm and runs in O(n) time, so it
 is asymptotically faster than sorting or other heap-like implementations for
 finding the smallest k elements in a data structure.
 
-Note that k must be in the range [0, data.Len()), otherwise the QuickSelect
+Note that k must be in the range (0, data.Len()], otherwise the QuickSelect
 method will raise an error.
 */
 func QuickSelect(data Interface, k int) (error) {
   length := data.Len()
   if (k < 1 || k > length) {
-    message := fmt.Sprintf("The specified index '%d' is outside of the data's range of indices [0,%d)", k, length)
-    return errors.New(message)
+    return fmt.Errorf("The specified index '%d' is outside of the data's range of indices (0,%d]", k, length)
   }
 
   kRatio := float64(k) / float64(length)
