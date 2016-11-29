@@ -9,18 +9,18 @@ heap implementations).
 package quickselect
 
 import (
-  "math/rand"
-  "errors"
-  "fmt"
-  "container/heap"
+	"container/heap"
+	"errors"
+	"fmt"
+	"math/rand"
 )
 
 const (
-  partitionThreshold = 8
-  naiveSelectionLengthThreshold = 100
-  naiveSelectionThreshold = 10
-  heapSelectionKRatio = 0.001
-  heapSelectionThreshold = 1e3
+	partitionThreshold            = 8
+	naiveSelectionLengthThreshold = 100
+	naiveSelectionThreshold       = 10
+	heapSelectionKRatio           = 0.001
+	heapSelectionThreshold        = 1e3
 )
 
 /*
@@ -32,51 +32,51 @@ Note that the methods require that the elements of the collection be enumerated
 by an integer index.
 */
 type Interface interface {
-  // Len is the number of elements in the collection
-  Len() int
-  // Less reports whether the element with
-  // index i should sort before the element with index j
-  Less(i, j int) bool
-  // Swap swaps the order of elements i and j
-  Swap(i, j int)
+	// Len is the number of elements in the collection
+	Len() int
+	// Less reports whether the element with
+	// index i should sort before the element with index j
+	Less(i, j int) bool
+	// Swap swaps the order of elements i and j
+	Swap(i, j int)
 }
 
 type reverse struct {
-  // This embedded Interface permits Reverse to use the methods of
-  // another Interface implementation.
-  Interface
+	// This embedded Interface permits Reverse to use the methods of
+	// another Interface implementation.
+	Interface
 }
 
 // Less returns the opposite of the embedded implementation's Less method.
 func (r reverse) Less(i, j int) bool {
-  return r.Interface.Less(j, i)
+	return r.Interface.Less(j, i)
 }
 
-func Reverse(data Interface) (Interface) {
-  return &reverse{data}
+func Reverse(data Interface) Interface {
+	return &reverse{data}
 }
 
 // The IntSlice type attaches the QuickSelect interface to an array of ints. It
 // implements Interface so that you can call QuickSelect(k) on any IntSlice.
 type IntSlice []int
 
-func (t IntSlice) Len() (int) {
-  return len(t)
+func (t IntSlice) Len() int {
+	return len(t)
 }
 
 func (t IntSlice) Less(i, j int) bool {
-  return t[i] < t[j]
+	return t[i] < t[j]
 }
 
 func (t IntSlice) Swap(i, j int) {
-  t[i], t[j] = t[j], t[i]
+	t[i], t[j] = t[j], t[i]
 }
 
 // QuickSelect(k) mutates the IntSlice so that the first k elements in the
 // IntSlice are the k smallest elements in the slice. This is a convenience
 // method for QuickSelect
-func (t IntSlice) QuickSelect(k int) (error) {
-  return QuickSelect(t, k)
+func (t IntSlice) QuickSelect(k int) error {
+	return QuickSelect(t, k)
 }
 
 // The Float64Slice type attaches the QuickSelect interface to an array of
@@ -84,23 +84,23 @@ func (t IntSlice) QuickSelect(k int) (error) {
 // Float64Slice.
 type Float64Slice []float64
 
-func (t Float64Slice) Len() (int) {
-  return len(t)
+func (t Float64Slice) Len() int {
+	return len(t)
 }
 
 func (t Float64Slice) Less(i, j int) bool {
-  return t[i] < t[j] || isNaN(t[i]) && !isNaN(t[j])
+	return t[i] < t[j] || isNaN(t[i]) && !isNaN(t[j])
 }
 
 func (t Float64Slice) Swap(i, j int) {
-  t[i], t[j] = t[j], t[i]
+	t[i], t[j] = t[j], t[i]
 }
 
 // QuickSelect(k) mutates the Float64Slice so that the first k elements in the
 // Float64Slice are the k smallest elements in the slice. This is a convenience
 // method for QuickSelect
-func (t Float64Slice) QuickSelect(k int) (error) {
-  return QuickSelect(t, k)
+func (t Float64Slice) QuickSelect(k int) error {
+	return QuickSelect(t, k)
 }
 
 // The StringSlice type attaches the QuickSelect interface to an array of
@@ -108,28 +108,28 @@ func (t Float64Slice) QuickSelect(k int) (error) {
 // StringSlice.
 type StringSlice []string
 
-func (t StringSlice) Len() (int) {
-  return len(t)
+func (t StringSlice) Len() int {
+	return len(t)
 }
 
 func (t StringSlice) Less(i, j int) bool {
-  return t[i] < t[j]
+	return t[i] < t[j]
 }
 
 func (t StringSlice) Swap(i, j int) {
-  t[i], t[j] = t[j], t[i]
+	t[i], t[j] = t[j], t[i]
 }
 
 // QuickSelect(k) mutates the StringSlice so that the first k elements in the
 // StringSlice are the k smallest elements in the slice. This is a convenience
 // method for QuickSelect
-func (t StringSlice) QuickSelect(k int) (error) {
-  return QuickSelect(t, k)
+func (t StringSlice) QuickSelect(k int) error {
+	return QuickSelect(t, k)
 }
 
 // isNaN is a copy of math.IsNaN to avoid a dependency on the math package.
 func isNaN(f float64) bool {
-  return f != f
+	return f != f
 }
 
 /*
@@ -142,36 +142,36 @@ elements to the left are less than the pivot element and vice versa for
 elements on the right. Recursing on this solves the selection algorithm.
 */
 func randomizedSelectionFinding(data Interface, low, high, k int) {
-  var pivotIndex int
+	var pivotIndex int
 
-  for {
-    if low >= high {
-      return
-    } else if high - low <= partitionThreshold {
-      insertionSort(data, low, high + 1)
-      return
-    }
+	for {
+		if low >= high {
+			return
+		} else if high-low <= partitionThreshold {
+			insertionSort(data, low, high+1)
+			return
+		}
 
-    pivotIndex = rand.Intn(high + 1 - low) + low
-    pivotIndex = partition(data, low, high, pivotIndex)
+		pivotIndex = rand.Intn(high+1-low) + low
+		pivotIndex = partition(data, low, high, pivotIndex)
 
-    if k < pivotIndex {
-      high = pivotIndex - 1
-    } else if k > pivotIndex {
-      low = pivotIndex + 1
-    } else {
-      return
-    }
-  }
+		if k < pivotIndex {
+			high = pivotIndex - 1
+		} else if k > pivotIndex {
+			low = pivotIndex + 1
+		} else {
+			return
+		}
+	}
 }
 
 // Insertion sort
 func insertionSort(data Interface, a, b int) {
-  for i := a + 1; i < b; i++ {
-    for j := i; j > a && data.Less(j, j-1); j-- {
-      data.Swap(j, j-1)
-    }
-  }
+	for i := a + 1; i < b; i++ {
+		for j := i; j > a && data.Less(j, j-1); j-- {
+			data.Swap(j, j-1)
+		}
+	}
 }
 
 /*
@@ -180,23 +180,23 @@ indices that it has seen so far. At the end, it swaps those k elements and
 moves them to the front.
 */
 func naiveSelectionFinding(data Interface, k int) {
-  smallestIndices := make([]int, k)
-  for i := 0; i < k; i++ {
-    smallestIndices[i] = i
-  }
-  resetLargestIndex(smallestIndices, data)
+	smallestIndices := make([]int, k)
+	for i := 0; i < k; i++ {
+		smallestIndices[i] = i
+	}
+	resetLargestIndex(smallestIndices, data)
 
-  for i := k; i < data.Len(); i++ {
-    if data.Less(i, smallestIndices[k-1]) {
-      smallestIndices[k-1] = i
-      resetLargestIndex(smallestIndices, data)
-    }
-  }
+	for i := k; i < data.Len(); i++ {
+		if data.Less(i, smallestIndices[k-1]) {
+			smallestIndices[k-1] = i
+			resetLargestIndex(smallestIndices, data)
+		}
+	}
 
-  insertionSort(IntSlice(smallestIndices), 0, k)
-  for i := 0; i < k; i++ {
-    data.Swap(i, smallestIndices[i])
-  }
+	insertionSort(IntSlice(smallestIndices), 0, k)
+	for i := 0; i < k; i++ {
+		data.Swap(i, smallestIndices[i])
+	}
 }
 
 /*
@@ -204,17 +204,17 @@ Takes the largest index in `indices` according to the data Interface and places
 it at the end of the indices array.
 */
 func resetLargestIndex(indices []int, data Interface) {
-  var largestIndex = 0
-  var currentLargest = indices[0]
+	var largestIndex = 0
+	var currentLargest = indices[0]
 
-  for i := 1; i < len(indices); i++ {
-    if data.Less(currentLargest, indices[i]) {
-      largestIndex = i
-      currentLargest = indices[i]
-    }
-  }
+	for i := 1; i < len(indices); i++ {
+		if data.Less(currentLargest, indices[i]) {
+			largestIndex = i
+			currentLargest = indices[i]
+		}
+	}
 
-  indices[len(indices) - 1], indices[largestIndex] = indices[largestIndex], indices[len(indices) - 1]
+	indices[len(indices)-1], indices[largestIndex] = indices[largestIndex], indices[len(indices)-1]
 }
 
 /*
@@ -226,38 +226,40 @@ originally in the pivotIndex and that the elements in the range
 [paritionIndex + 1, high] are greater than the element originally in the
 pivotIndex.
 */
-func partition(data Interface, low, high, pivotIndex int) (int) {
-  partitionIndex := low
-  data.Swap(pivotIndex, high)
-  for i := low; i < high; i++ {
-    if data.Less(i, high) {
-      data.Swap(i, partitionIndex)
-      partitionIndex++
-    }
-  }
-  data.Swap(partitionIndex, high)
-  return partitionIndex
+func partition(data Interface, low, high, pivotIndex int) int {
+	partitionIndex := low
+	data.Swap(pivotIndex, high)
+	for i := low; i < high; i++ {
+		if data.Less(i, high) {
+			data.Swap(i, partitionIndex)
+			partitionIndex++
+		}
+	}
+	data.Swap(partitionIndex, high)
+	return partitionIndex
 }
 
 type dataHeap struct {
-  heapIndices []int
-  data Interface
+	heapIndices []int
+	data        Interface
 }
 
-func (h dataHeap) Len() int { return len(h.heapIndices) }
+func (h dataHeap) Len() int           { return len(h.heapIndices) }
 func (h dataHeap) Less(i, j int) bool { return h.data.Less(h.heapIndices[j], h.heapIndices[i]) }
-func (h dataHeap) Swap(i, j int) { h.heapIndices[i], h.heapIndices[j] = h.heapIndices[j], h.heapIndices[i] }
+func (h dataHeap) Swap(i, j int) {
+	h.heapIndices[i], h.heapIndices[j] = h.heapIndices[j], h.heapIndices[i]
+}
 
 func (h *dataHeap) Push(x interface{}) {
-  h.heapIndices = append(h.heapIndices, x.(int))
+	h.heapIndices = append(h.heapIndices, x.(int))
 }
 
 func (h *dataHeap) Pop() interface{} {
-  old := h.heapIndices
-  n := len(old)
-  x := old[n-1]
-  h.heapIndices = old[0 : n-1]
-  return x
+	old := h.heapIndices
+	n := len(old)
+	x := old[n-1]
+	h.heapIndices = old[0 : n-1]
+	return x
 }
 
 /*
@@ -266,27 +268,27 @@ It keeps a max-heap of the smallest k elements seen so far as we iterate over
 all of the elements. It adds a new element and pops the largest element.
 */
 func heapSelectionFinding(data Interface, k int) {
-  heapIndices := make([]int, k)
-  for i := 0; i < k; i++ {
-    heapIndices[i] = i
-  }
+	heapIndices := make([]int, k)
+	for i := 0; i < k; i++ {
+		heapIndices[i] = i
+	}
 
-  h := &dataHeap{heapIndices, data}
-  heap.Init(h)
-  var currentHeapMax int
-  for i := k; i < data.Len(); i++ {
-    currentHeapMax = h.heapIndices[0]
+	h := &dataHeap{heapIndices, data}
+	heap.Init(h)
+	var currentHeapMax int
+	for i := k; i < data.Len(); i++ {
+		currentHeapMax = h.heapIndices[0]
 
-    if data.Less(i, currentHeapMax) {
-      heap.Push(h, i)
-      heap.Pop(h)
-    }
-  }
+		if data.Less(i, currentHeapMax) {
+			heap.Push(h, i)
+			heap.Pop(h)
+		}
+	}
 
-  insertionSort(IntSlice(h.heapIndices), 0, len(h.heapIndices))
-  for i := 0; i < len(h.heapIndices); i++ {
-    data.Swap(i, h.heapIndices[i])
-  }
+	insertionSort(IntSlice(h.heapIndices), 0, len(h.heapIndices))
+	for i := 0; i < len(h.heapIndices); i++ {
+		data.Swap(i, h.heapIndices[i])
+	}
 }
 
 /*
@@ -301,42 +303,42 @@ finding the smallest k elements in a data structure.
 Note that k must be in the range [0, data.Len()), otherwise the QuickSelect
 method will raise an error.
 */
-func QuickSelect(data Interface, k int) (error) {
-  length := data.Len()
-  if (k < 1 || k > length) {
-    message := fmt.Sprintf("The specified index '%d' is outside of the data's range of indices [0,%d)", k, length)
-    return errors.New(message)
-  }
+func QuickSelect(data Interface, k int) error {
+	length := data.Len()
+	if k < 1 || k > length {
+		message := fmt.Sprintf("The specified index '%d' is outside of the data's range of indices [0,%d)", k, length)
+		return errors.New(message)
+	}
 
-  kRatio := float64(k) / float64(length)
-  if length <= naiveSelectionLengthThreshold && k <= naiveSelectionThreshold {
-    naiveSelectionFinding(data, k)
-  } else if kRatio <= heapSelectionKRatio && k <= heapSelectionThreshold {
-    heapSelectionFinding(data, k)
-  } else {
-    randomizedSelectionFinding(data, 0, length - 1, k)
-  }
+	kRatio := float64(k) / float64(length)
+	if length <= naiveSelectionLengthThreshold && k <= naiveSelectionThreshold {
+		naiveSelectionFinding(data, k)
+	} else if kRatio <= heapSelectionKRatio && k <= heapSelectionThreshold {
+		heapSelectionFinding(data, k)
+	} else {
+		randomizedSelectionFinding(data, 0, length-1, k)
+	}
 
-  return nil
+	return nil
 }
 
 // IntQuickSelect mutates the data so that the first k elements in the int
 // slice are the k smallest elements in the slice. This is a convenience
 // method for QuickSelect on int slices.
-func IntQuickSelect(data []int, k int) (error) {
-  return QuickSelect(IntSlice(data), k)
+func IntQuickSelect(data []int, k int) error {
+	return QuickSelect(IntSlice(data), k)
 }
 
 // Float64Select mutates the data so that the first k elements in the float64
 // slice are the k smallest elements in the slice. This is a convenience
 // method for QuickSelect on float64 slices.
-func Float64QuickSelect(data []float64, k int) (error) {
-  return QuickSelect(Float64Slice(data), k)
+func Float64QuickSelect(data []float64, k int) error {
+	return QuickSelect(Float64Slice(data), k)
 }
 
 // StringQuickSelect mutates the data so that the first k elements in the string
 // slice are the k smallest elements in the slice. This is a convenience
 // method for QuickSelect on string slices.
-func StringQuickSelect(data []string, k int) (error) {
-  return QuickSelect(StringSlice(data), k)
+func StringQuickSelect(data []string, k int) error {
+	return QuickSelect(StringSlice(data), k)
 }
