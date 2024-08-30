@@ -31,7 +31,7 @@ func TestQuickSelectWithSimpleArray(t *testing.T) {
 	smallestK := fixture.Array[:5]
 	expectedK := []int{2, 3, 4, 5, 6}
 	if !hasSameElements(smallestK, expectedK) {
-		t.Errorf("Expected smallest K elements to be '%s', but got '%s'", expectedK, smallestK)
+		t.Errorf("Expected smallest K elements to be '%v', but got '%v'", expectedK, smallestK)
 	}
 }
 
@@ -45,7 +45,7 @@ func TestQuickSelectWithRepeatedElements(t *testing.T) {
 	smallestK := fixture.Array[:5]
 	expectedK := []int{2, 2, 2, 3, 3}
 	if !hasSameElements(smallestK, expectedK) {
-		t.Errorf("Expected smallest K elements to be '%s', but got '%s'", expectedK, smallestK)
+		t.Errorf("Expected smallest K elements to be '%v', but got '%v'", expectedK, smallestK)
 	}
 }
 
@@ -85,7 +85,7 @@ func TestIntSliceQuickSelect(t *testing.T) {
 
 		resultK := fixture.Array[:4]
 		if !hasSameElements(resultK, fixture.ExpectedK) {
-			t.Errorf("Expected smallest K elements to be '%s', but got '%s'", fixture.ExpectedK, resultK)
+			t.Errorf("Expected smallest K elements to be '%v', but got '%v'", fixture.ExpectedK, resultK)
 		}
 	}
 }
@@ -131,7 +131,7 @@ func TestNaiveSelectionFinding(t *testing.T) {
 
 		resultK := fixture.Array[:4]
 		if !hasSameElements(resultK, fixture.ExpectedK) {
-			t.Errorf("Expected smallest K elements to be '%s', but got '%s'", fixture.ExpectedK, resultK)
+			t.Errorf("Expected smallest K elements to be '%v', but got '%v'", fixture.ExpectedK, resultK)
 		}
 	}
 }
@@ -153,7 +153,7 @@ func TestHeapSelectionFinding(t *testing.T) {
 
 		resultK := fixture.Array[:4]
 		if !hasSameElements(resultK, fixture.ExpectedK) {
-			t.Errorf("Expected smallest K elements to be '%s', but got '%s'", fixture.ExpectedK, resultK)
+			t.Errorf("Expected smallest K elements to be '%v', but got '%v'", fixture.ExpectedK, resultK)
 		}
 	}
 }
@@ -176,7 +176,7 @@ func TestFloat64SliceQuickSelect(t *testing.T) {
 
 		resultK := fixture.Array[:4]
 		if !hasSameElementsFloat64(resultK, fixture.ExpectedK) {
-			t.Errorf("Expected smallest K elements to be '%s', but got '%s'", fixture.ExpectedK, resultK)
+			t.Errorf("Expected smallest K elements to be '%v', but got '%v'", fixture.ExpectedK, resultK)
 		}
 	}
 }
