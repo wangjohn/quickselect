@@ -9,10 +9,8 @@ heap implementations).
 package quickselect
 
 import (
-	"container/heap"
-	"errors"
 	"fmt"
-	"math/rand"
+	"math/rand/v2"
 )
 
 const (
@@ -152,7 +150,7 @@ func randomizedSelectionFinding(data Interface, low, high, k int) {
 			return
 		}
 
-		pivotIndex = rand.Intn(high+1-low) + low
+		pivotIndex = rand.IntN(high+1-low) + low
 		pivotIndex = partition(data, low, high, pivotIndex)
 
 		if k < pivotIndex {
@@ -186,7 +184,8 @@ func naiveSelectionFinding(data Interface, k int) {
 	}
 	resetLargestIndex(smallestIndices, data)
 
-	for i := k; i < data.Len(); i++ {
+	length := data.Len()
+	for i := k; i < length; i++ {
 		if data.Less(i, smallestIndices[k-1]) {
 			smallestIndices[k-1] = i
 			resetLargestIndex(smallestIndices, data)
@@ -239,27 +238,30 @@ func partition(data Interface, low, high, pivotIndex int) int {
 	return partitionIndex
 }
 
-type dataHeap struct {
-	heapIndices []int
-	data        Interface
+func heapInit(data Interface, heap []int) {
+	// Heapify process
+	n := len(heap)
+	for i := n/2 - 1; i >= 0; i-- {
+		heapDown(data, heap, i, n)
+	}
 }
 
-func (h dataHeap) Len() int           { return len(h.heapIndices) }
-func (h dataHeap) Less(i, j int) bool { return h.data.Less(h.heapIndices[j], h.heapIndices[i]) }
-func (h dataHeap) Swap(i, j int) {
-	h.heapIndices[i], h.heapIndices[j] = h.heapIndices[j], h.heapIndices[i]
-}
-
-func (h *dataHeap) Push(x interface{}) {
-	h.heapIndices = append(h.heapIndices, x.(int))
-}
-
-func (h *dataHeap) Pop() interface{} {
-	old := h.heapIndices
-	n := len(old)
-	x := old[n-1]
-	h.heapIndices = old[0 : n-1]
-	return x
+func heapDown(data Interface, heap []int, i, n int) {
+	for {
+		j1 := 2*i + 1
+		if j1 >= n || j1 < 0 { // j1 < 0 after int overflow
+			break
+		}
+		j := j1 // left child
+		if j2 := j1 + 1; j2 < n && data.Less(heap[j1], heap[j2]) {
+			j = j2 // right child
+		}
+		if !data.Less(heap[i], heap[j]) {
+			break
+		}
+		heap[i], heap[j] = heap[j], heap[i]
+		i = j
+	}
 }
 
 /*
@@ -268,26 +270,23 @@ It keeps a max-heap of the smallest k elements seen so far as we iterate over
 all of the elements. It adds a new element and pops the largest element.
 */
 func heapSelectionFinding(data Interface, k int) {
-	heapIndices := make([]int, k)
+	heap := make([]int, k)
 	for i := 0; i < k; i++ {
-		heapIndices[i] = i
+		heap[i] = i
 	}
+	heapInit(data, heap)
 
-	h := &dataHeap{heapIndices, data}
-	heap.Init(h)
-	var currentHeapMax int
-	for i := k; i < data.Len(); i++ {
-		currentHeapMax = h.heapIndices[0]
-
-		if data.Less(i, currentHeapMax) {
-			heap.Push(h, i)
-			heap.Pop(h)
+	length := data.Len()
+	for i := k; i < length; i++ {
+		if data.Less(i, heap[0]) {
+			heap[0] = i
+			heapDown(data, heap, 0, k)
 		}
 	}
 
-	insertionSort(IntSlice(h.heapIndices), 0, len(h.heapIndices))
-	for i := 0; i < len(h.heapIndices); i++ {
-		data.Swap(i, h.heapIndices[i])
+	insertionSort(IntSlice(heap), 0, k)
+	for i := 0; i < k; i++ {
+		data.Swap(i, heap[i])
 	}
 }
 
@@ -306,8 +305,7 @@ method will raise an error.
 func QuickSelect(data Interface, k int) error {
 	length := data.Len()
 	if k < 1 || k > length {
-		message := fmt.Sprintf("The specified index '%d' is outside of the data's range of indices [0,%d)", k, length)
-		return errors.New(message)
+		return fmt.Errorf("The specified index '%d' is outside of the data's range of indices [0,%d)", k, length)
 	}
 
 	kRatio := float64(k) / float64(length)
